@@ -21,20 +21,27 @@
 #include "Arduino.h"
 #include "DHT.h"
 
-#define LIGHTPIN 0
-#define TEMPPIN 1 // the cell and 10K pulldown are connected to a0
-#define DHTPIN 3
+#define LIGHT_PIN 0
+#define TEMP_PIN 1 // the cell and 10K pulldown are connected to a0
+#define DHT_PIN 3
+#define SOUND_DIGITAL_PIN 6
+#define SOUND_ANALOG_PIN 2
 
-int lightReading;     // the analog reading from the sensor divider
-float tempReading;
-int sampleTime = 5000; // 1 second dafault
+int light_reading;     // the analog reading from the sensor divider
+float temp_reading;
+int sound_digital_reading;
+int sound_analog_reading;
+int wait_time = 5000;
 
-DHT dht(DHTPIN, DHT11);
+DHT dht(DHT_PIN, DHT11);
 
 void setup(void) {
   Serial.begin(9600);
+
   dht.begin();
-  delay(1000);//Wait before accessing sensors
+  pinMode(SOUND_DIGITAL_PIN, INPUT);
+
+  delay(wait_time);//Wait before accessing sensors
 }
 
 void loop(void) {
@@ -61,29 +68,37 @@ void loop(void) {
     Serial.println(" *F");
 
     Serial.println("--------LIGHT-------");
-    lightReading = analogRead(LIGHTPIN);
+    light_reading = analogRead(LIGHT_PIN);
     Serial.print("Light Sensor: ");
-    Serial.println(lightReading);     // the raw analog reading
+    Serial.println(light_reading);     // the raw analog reading
 
     //gets and prints the raw data from the lm35
     Serial.println("----------TEMP----------");
-    tempReading = analogRead(TEMPPIN);
+    temp_reading = analogRead(TEMP_PIN);
     Serial.print("RAW DATA: ");
-    Serial.print (tempReading);
+    Serial.print (temp_reading);
     Serial.println(" ");
     //converts raw data into degrees celsius and prints it out
     // 500mV/1024=.48828125
-    tempReading = tempReading * 500/1024;
+    temp_reading = temp_reading * 500/1024;
     Serial.print("CELSIUS: ");
-    Serial.print(tempReading);
+    Serial.print(temp_reading);
     Serial.println("*C ");
     //converts celsius into fahrenheit
-    tempReading = tempReading *9 / 5;
-    tempReading = tempReading + 32;
+    temp_reading = temp_reading *9 / 5;
+    temp_reading = temp_reading + 32;
     Serial.print("FAHRENHEIT: ");
-    Serial.print(tempReading);
+    Serial.print(temp_reading);
     Serial.println("*F");
 
+    Serial.println("----------SOUND----------");
+    sound_digital_reading = digitalRead(SOUND_DIGITAL_PIN);
+    sound_analog_reading = analogRead(SOUND_ANALOG_PIN);
+    Serial.print("Sound digital output: ");
+    Serial.println(sound_digital_reading);
+    Serial.print("Sound analog output: ");
+    Serial.println(sound_analog_reading);
+
     Serial.println("--------DONE-------");
-    delay(sampleTime);
+    delay(wait_time);
 }
