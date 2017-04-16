@@ -11,16 +11,20 @@ require.config({
   }
 });
 
-var websocket = new WebSocket("ws://localhost:8000");
-
-websocket.onmessage = function (event) {
-  console.log(JSON.parse(event.data));
-}
-
 require(['jquery', 'moment', 'chartjs'], function($ ,moment, Chart) {
   
   function newDate(days) {
 		return moment().add(days, 'd').toDate();
+	}
+
+	var websocket = new WebSocket("ws://localhost:8000");
+
+	websocket.onmessage = function (event) {
+	  console.log(JSON.parse(event.data));
+	}
+
+	window.onbeforeunload = function () {
+	  websocket.close();
 	}
   
   var config = {
@@ -60,7 +64,3 @@ require(['jquery', 'moment', 'chartjs'], function($ ,moment, Chart) {
 });
 
 //HAVE ONCLICK THAT SENDS WEBSOCKET MESSAGE REQUESTING DATA FOR SPECIFIC DATA SETS
-
-window.onbeforeunload = function () {
-        websocket.close();
-    }

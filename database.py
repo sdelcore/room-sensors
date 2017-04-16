@@ -26,36 +26,3 @@ class Database:
 
     def __del__(self):
         self.connection.close()
-
-
-if __name__ == "__main__":
-
-    db = Database()
-
-    #CleanUp Operation
-    del_query = "DELETE FROM basic_python_database"
-    db.insert(del_query)
-
-    # Data Insert into the table
-    query = """
-        INSERT INTO basic_python_database
-        (`name`, `age`)
-        VALUES
-        ('Mike', 21),
-        ('Michael', 21),
-        ('Imran', 21)
-        """
-
-    # db.query(query)
-    db.insert(query)
-
-    # Data retrieved from the table
-    select_query = """
-        SELECT * FROM basic_python_database
-        WHERE age = 21
-        """
-
-    people = db.query(select_query)
-
-    for person in people:
-        print "Found %s " % person['name']
