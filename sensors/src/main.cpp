@@ -18,6 +18,7 @@
 
         Example: <DHT+021.21C>
 */
+
 #include "Arduino.h"
 #include "DHT.h"
 
@@ -26,7 +27,9 @@
 #define DHT_PIN 3
 #define SOUND_DIGITAL_PIN 6
 #define SOUND_ANALOG_PIN 2
+#define START_READ_PIN 13
 
+int start_read = 0;
 int light_reading;     // the analog reading from the sensor divider
 float temp_reading;
 int sound_digital_reading;
@@ -40,64 +43,46 @@ void setup(void) {
 
   dht.begin();
   pinMode(SOUND_DIGITAL_PIN, INPUT);
-
+  pinMode(START_READ_PIN, INPUT);
   delay(wait_time);//Wait before accessing sensors
 }
 
 void loop(void) {
+    start_read = digitalRead(START_READ_PIN);
+
+    if(!start_read)
+    {
+        return;
+    }
+
     Serial.println("------HUMIDITY-------");
     float h = dht.readHumidity(); // Read temperature as percentage
     float t = dht.readTemperature(); // Read temperature as Celsius
-    float f = dht.readTemperature(true); // Read temperature as Fahrenheit
 
-    float hif = dht.computeHeatIndex(f, h); // Compute heat index in Fahrenheit
-    float hic = dht.computeHeatIndex(t, h, false); // Compute heat index in Celsius
-
-    Serial.print("Humidity: ");
-    Serial.print(h);
-    Serial.println(" %\t");
-    Serial.print("Temperature: ");
-    Serial.print(t);
-    Serial.println(" *C ");
-    Serial.print(f);
-    Serial.println(" *F\t");
-    Serial.print("Heat index: ");
-    Serial.print(hic);
-    Serial.println(" *C ");
-    Serial.print(hif);
-    Serial.println(" *F");
+    char dht_temp_str[7];
+    sprintf(dht_temp_str, "<DHT %07.2f C>", t);
+    char dht_humid_str[7];
+    sprintf(dht_humid_str, "<DHH %07.2f %>", h);
 
     Serial.println("--------LIGHT-------");
     light_reading = analogRead(LIGHT_PIN);
-    Serial.print("Light Sensor: ");
-    Serial.println(light_reading);     // the raw analog reading
+    char light_str[7];
+    sprintf(light_str, "<LIT %07.2f ->", light_reading);
 
     //gets and prints the raw data from the lm35
     Serial.println("----------TEMP----------");
     temp_reading = analogRead(TEMP_PIN);
-    Serial.print("RAW DATA: ");
-    Serial.print (temp_reading);
-    Serial.println(" ");
     //converts raw data into degrees celsius and prints it out
     // 500mV/1024=.48828125
     temp_reading = temp_reading * 500/1024;
-    Serial.print("CELSIUS: ");
-    Serial.print(temp_reading);
-    Serial.println("*C ");
-    //converts celsius into fahrenheit
-    temp_reading = temp_reading *9 / 5;
-    temp_reading = temp_reading + 32;
-    Serial.print("FAHRENHEIT: ");
-    Serial.print(temp_reading);
-    Serial.println("*F");
+    char temp_str[7];
+    sprintf(temp_str, "<TMP %07.2f C>");
 
     Serial.println("----------SOUND----------");
     sound_digital_reading = digitalRead(SOUND_DIGITAL_PIN);
     sound_analog_reading = analogRead(SOUND_ANALOG_PIN);
-    Serial.print("Sound digital output: ");
-    Serial.println(sound_digital_reading);
-    Serial.print("Sound analog output: ");
-    Serial.println(sound_analog_reading);
+    char sound_str[7];
+    sprintf(sound_str, "<SND %07.2f ->");
 
     Serial.println("--------DONE-------");
     delay(wait_time);
