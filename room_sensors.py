@@ -46,7 +46,7 @@ class Room_Sensors:
 		sensor_readings = []
 		for sensor in sensors:
 			select_query = "SELECT * FROM ? WHERE day = ? AND month = ? AND year = ?", (sensor, day, month, year)
-			sensor_readings.Add(self.database.query(select_query))
+			sensor_readings.Add('sensor': self.database.query(select_query))
 		return sensor_readings
 
 if __name__ == "__main__":
