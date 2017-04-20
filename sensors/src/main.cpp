@@ -11,9 +11,8 @@
     Protocol for sending sensor through serial port
         Start sending a sensor reading: <
         Sensor indicator: 3 chars indicating sensor (XXX)
-        Sensor value sign: +/-
-        Sensor value numbers: ###.##
         Unit indicator: 1 char indicating unit of data (C/F/%)
+        Sensor value numbers: ##
         Finish sending a sensor reading: >
 
         Example: <DHT+021.21C>
@@ -31,7 +30,8 @@
 
 int start_read = 0;
 int light_reading;     // the analog reading from the sensor divider
-float temp_reading;
+float temp_reading_raw;
+int temp_reading;
 int sound_digital_reading;
 int sound_analog_reading;
 int wait_time = 5000;
@@ -55,35 +55,33 @@ void loop(void) {
         return;
     }
 
-    Serial.println("------HUMIDITY-------");
-    float h = dht.readHumidity(); // Read temperature as percentage
-    float t = dht.readTemperature(); // Read temperature as Celsius
+    int h = dht.readHumidity(); // Read temperature as percentage
+    int t = dht.readTemperature(); // Read temperature as Celsius
+    char dht_temp_str[10];
+    sprintf(dht_temp_str, "<DHTC%d>", t);
+    char dht_humid_str[10];
+    sprintf(dht_humid_str, "<DHH%%%d>", h);
 
-    char dht_temp_str[7];
-    sprintf(dht_temp_str, "<DHT %07.2f C>", t);
-    char dht_humid_str[7];
-    sprintf(dht_humid_str, "<DHH %07.2f %>", h);
-
-    Serial.println("--------LIGHT-------");
     light_reading = analogRead(LIGHT_PIN);
-    char light_str[7];
-    sprintf(light_str, "<LIT %07.2f ->", light_reading);
+    char light_str[10];
+    sprintf(light_str, "<LIT-%d>", light_reading);
 
     //gets and prints the raw data from the lm35
-    Serial.println("----------TEMP----------");
-    temp_reading = analogRead(TEMP_PIN);
+    temp_reading_raw = analogRead(TEMP_PIN);
     //converts raw data into degrees celsius and prints it out
     // 500mV/1024=.48828125
-    temp_reading = temp_reading * 500/1024;
-    char temp_str[7];
-    sprintf(temp_str, "<TMP %07.2f C>");
+    temp_reading = temp_reading_raw * 500/1024;
+    char temp_str[10];
+    sprintf(temp_str, "<TMPC%d>", temp_reading);
 
-    Serial.println("----------SOUND----------");
     sound_digital_reading = digitalRead(SOUND_DIGITAL_PIN);
     sound_analog_reading = analogRead(SOUND_ANALOG_PIN);
-    char sound_str[7];
-    sprintf(sound_str, "<SND %07.2f ->");
+    char sound_str[10];
+    sprintf(sound_str, "<SND-%d>", sound_analog_reading);
 
-    Serial.println("--------DONE-------");
-    delay(wait_time);
+    Serial.print(dht_humid_str);
+    Serial.print(dht_temp_str);
+    Serial.print(light_str);
+    Serial.print(temp_str);
+    Serial.print(sound_str);
 }
