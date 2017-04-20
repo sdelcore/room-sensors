@@ -48,12 +48,7 @@ void setup(void) {
 }
 
 void loop(void) {
-    start_read = digitalRead(START_READ_PIN);
-
-    if(!start_read)
-    {
-        return;
-    }
+    while (Serial.available() <= 0 && Serial.read() != 1);
 
     int h = dht.readHumidity(); // Read temperature as percentage
     int t = dht.readTemperature(); // Read temperature as Celsius
@@ -83,5 +78,5 @@ void loop(void) {
     Serial.print(dht_temp_str);
     Serial.print(light_str);
     Serial.print(temp_str);
-    Serial.print(sound_str);
+    Serial.println(sound_str);
 }
