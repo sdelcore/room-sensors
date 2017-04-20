@@ -1,5 +1,7 @@
 from database import Database
 import serial
+import datetime
+import time
 
 class Room_Sensors:
 	sensors = {
@@ -17,7 +19,12 @@ class Room_Sensors:
 	def readSerial(self):
 		readings = []
 		data = self.arduino.readline().strip()
-		
+
+		while data.count("<<") != 1 or data.count(">>") != 1:
+			time.sleep(1)
+			data = self.arduino.readline().strip()
+
+		data = data[2:-2]
 		while '<' in data:
 			start = data.find('<') + 1
 			end = data.find('>')
@@ -55,6 +62,5 @@ class Room_Sensors:
 
 if __name__ == "__main__":
 	room = Room_Sensors()
-	room.sendSerial("1")
 	readings = room.readSerial()
 	room.saveSerial(readings)

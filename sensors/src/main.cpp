@@ -47,9 +47,13 @@ void setup(void) {
   delay(wait_time);//Wait before accessing sensors
 }
 
-void loop(void) {
-    while (Serial.available() <= 0 && Serial.read() != 1);
+void serialFlush(){
+  while(Serial.available() > 0) {
+    Serial.read();
+  }
+}
 
+void loop(void) {
     int h = dht.readHumidity(); // Read temperature as percentage
     int t = dht.readTemperature(); // Read temperature as Celsius
     char dht_temp_str[10];
@@ -74,9 +78,13 @@ void loop(void) {
     char sound_str[10];
     sprintf(sound_str, "<SND-%d>", sound_analog_reading);
 
+    serialFlush();
+    Serial.print('<');
     Serial.print(dht_humid_str);
     Serial.print(dht_temp_str);
     Serial.print(light_str);
     Serial.print(temp_str);
     Serial.println(sound_str);
+    Serial.print('>');
+    delay(5000);
 }
