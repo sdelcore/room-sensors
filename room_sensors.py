@@ -24,7 +24,8 @@ class Room_Sensors:
 			time.sleep(1)
 			data = self.arduino.readline().strip()
 
-		data = data[2:-2]
+		data = data[data.find('<<') + 1: data.find('>>') + 1]
+
 		while '<' in data:
 			start = data.find('<') + 1
 			end = data.find('>')
@@ -50,13 +51,17 @@ class Room_Sensors:
 		time = date.strftime("%X")
 
 		for reading in readings:
-			query = "INSERT INTO ? (`value`, `unit`, 'day', 'month', 'year', 'time') VALUES (?, ?, ?, ?, ?, ?)", (reading['sensor'], reading['value'], reading['unit'], day, month, year, time)
+			query = """INSERT INTO {0} (value, unit) 
+								VALUES ({1}, '{2}')
+							""".format(reading['sensor'], reading['value'], reading['unit'])
 			self.database.insert(query)
 
 	def getReadingsFromDB(self, sensors = sensors.values(), day='*', month='*', year='*'):
 		sensor_readings = []
 		for sensor in sensors:
-			select_query = "SELECT * FROM ? WHERE day = ? AND month = ? AND year = ?", (sensor, day, month, year)
+			select_query = """SELECT * FROM {0} 
+											  WHERE DAY(date) = {1} AND MONTH(date) = {2} AND YEAR(date) = {3}
+										 """.format(sensor, day, month, year)
 			sensor_readings['sensor'] = self.database.query(select_query)
 		return sensor_readings
 

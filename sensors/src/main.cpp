@@ -34,7 +34,6 @@ float temp_reading_raw;
 int temp_reading;
 int sound_digital_reading;
 int sound_analog_reading;
-int wait_time = 5000;
 
 DHT dht(DHT_PIN, DHT11);
 
@@ -84,7 +83,7 @@ void loop(void) {
     Serial.print(dht_temp_str);
     Serial.print(light_str);
     Serial.print(temp_str);
-    Serial.println(sound_str);
-    Serial.print('>');
+    Serial.print(sound_str);
+    Serial.println('>');
     delay(5000);
 }
