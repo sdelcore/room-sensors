@@ -17,7 +17,7 @@ else
   rm -r $proj_dir
 fi
 
-git clone https://github.com/sdelcore/room-sensors.git $proj_dir
+git clone https://github.com/sdelcore/room-sensors.git $proj_dir > /dev/null
 
 chmod +x $proj_dir/room_sensors.py
 chmod +x $proj_dir/websocket_server.py
