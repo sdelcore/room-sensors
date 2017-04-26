@@ -1,3 +1,4 @@
+#!/usr/bin/python    
 from database import Database
 import serial
 import datetime
@@ -13,7 +14,7 @@ class Room_Sensors:
 	}
 
 	def __init__(self):
-		self.arduino = serial.Serial('/dev/ttyUSB0', 9600)
+		self.arduino = serial.Serial('/dev/ttyUSB0', 9600, timeout =.5)
 		self.database = Database()
 
 	def readSerial(self):
@@ -52,17 +53,41 @@ class Room_Sensors:
 
 		for reading in readings:
 			query = """INSERT INTO {0} (value, unit) 
-								VALUES ({1}, '{2}')
-							""".format(reading['sensor'], reading['value'], reading['unit'])
+				VALUES ({1}, '{2}')
+				""".format(reading['sensor'], reading['value'], reading['unit'])
 			self.database.insert(query)
 
-	def getReadingsFromDB(self, sensors = sensors.values(), day='*', month='*', year='*'):
-		sensor_readings = []
-		for sensor in sensors:
-			select_query = """SELECT * FROM {0} 
-											  WHERE DAY(date) = {1} AND MONTH(date) = {2} AND YEAR(date) = {3}
-										 """.format(sensor, day, month, year)
-			sensor_readings['sensor'] = self.database.query(select_query)
+	def getReadingsFromDB(self, data = {}):
+		sensor_readings = {}
+		where = []
+		query_where = ''
+
+		if 'sensors' not in data:
+			data['sensors'] = self.sensors.values()
+
+		if 'day' in data:
+			where.append('DAY(date) = {0}'.format(data['day']))
+
+		if 'month' in data:
+			where.append('MONTH(date) = {0}'.format(data['month']))
+		
+		if 'year' in data:
+			where.append('YEAR(date) = {0}'.format(data['year']))
+
+		if len(where) != 0:
+			query_where = ' WHERE ' + where[0]
+			where.pop(0)
+			for cond in where:
+				query_where += ' AND ' + cond
+
+		for sensor in data['sensors']:
+			if sensor not in self.sensors.values():
+				continue
+
+			select_query = 'SELECT * FROM {0}'.format(sensor)
+			select_query += query_where
+			sensor_readings[sensor] = self.database.query(select_query)
+
 		return sensor_readings
 
 if __name__ == "__main__":
