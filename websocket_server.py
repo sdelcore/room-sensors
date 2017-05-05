@@ -14,17 +14,26 @@ class WS_Server(WebSocket):
   room = Room_Sensors()
 
   def handleMessage(self):
+    to_get = {
+  		"sound": [self.data],
+  		"light": [self.data],
+  		"temperature": [self.data, "dht11_temperature"],
+  		"humidity": ["dht11_humidity"]
+    }
+
+    to_get = {"sensors": to_get[self.data]}
+    readings = self.room.getReadingsFromDB(to_get)
+    msg = json.dumps(readings, default=date_handler)
+
+    for client in clients:
+      	client.sendMessage(unicode(msg))
+
+  def handleConnected(self):
     readings = self.room.getReadingsFromDB()
     msg = json.dumps(readings, default=date_handler)
 
     for client in clients:
       client.sendMessage(unicode(msg))
-
-  def handleConnected(self):
-    print(self.address, 'connected')
-
-    for client in clients:
-      client.sendMessage(self.address[0] + u' - connected')
     
     clients.append(self)
 

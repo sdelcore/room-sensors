@@ -57,11 +57,11 @@ class Room_Sensors:
 				""".format(reading['sensor'], reading['value'], reading['unit'])
 			self.database.insert(query)
 
-	def getReadingsFromDB(self, data = {}):
+	def getReadingsFromDB(self, data={}):
 		sensor_readings = {}
 		where = []
 		query_where = ''
-
+		
 		if 'sensors' not in data:
 			data['sensors'] = self.sensors.values()
 
