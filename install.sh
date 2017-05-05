@@ -26,7 +26,7 @@ echo "done."
 
 echo "Creating cron job..."
 echo "*/30 * * * *	$user $proj_dir/room_sensors.py > /dev/null &" > /etc/cron.d/room_sensors
-echo "@reboot $user $proj_dir/room-sensors/websocket_server.py > /dev/null &" > /etc/cron.d/websocket_server
+echo "@reboot $user $proj_dir/websocket_server.py > /dev/null &" > /etc/cron.d/websocket_server
 echo "done."
 
 echo "Setting up database..."
@@ -36,6 +36,11 @@ for i in "${sensors[@]}"
 do
 	mysql --user="$mysql_user" --password="$password" --execute="use $database; CREATE TABLE $i (id INT NOT NULL AUTO_INCREMENT,value INT,unit VARCHAR(100),date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY ( id ) )"
 done
+echo "done."
+
+echo "Setting up web page..."
+rm -rf /var/www/html/*
+cp -a web/. /var/www/html/
 echo "done."
 
 $proj_dir/websocket_server.py > /dev/null &
