@@ -25,7 +25,7 @@ chmod +x $proj_dir/websocket_server.py
 echo "done."
 
 echo "Creating cron job..."
-echo "0 * * * *	$user $proj_dir/room_sensors.py > /dev/null &" > /etc/cron.d/room_sensors
+echo "*/30 * * * *	$user $proj_dir/room_sensors.py > /dev/null &" > /etc/cron.d/room_sensors
 echo "@reboot $user $proj_dir/room-sensors/websocket_server.py > /dev/null &" > /etc/cron.d/websocket_server
 echo "done."
 
