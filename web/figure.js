@@ -5,40 +5,43 @@ var websocket = new WebSocket("ws://localhost:8000");
 
 websocket.onmessage = function (event) {
   sensor_data = JSON.parse(event.data);
-  labels = [];
-  data = [];
+  plot_data = [];
 
   for(var sensor in sensor_data)
   {
+    labels = [];
+    data = [];
+
     for(i = 0; i < sensor_data[sensor].length; i++)
     {
       labels.push(moment(sensor_data[sensor][i]['date']).format('DD-MM-YYYY h:M a'));
       data.push(sensor_data[sensor][i]['value']);
     }
+
+    layout = {
+      "yaxis": {
+          "range": [
+              Math.min.apply(null, data) - 5, 
+              Math.max.apply(null, data) + 5
+          ],
+          "title": sensor_data[sensor][0]['unit']
+      }, 
+      "xaxis": {
+          "range": [
+              labels[0], 
+              labels[labels.length - 1]
+          ]
+      }
+    };
+
+    plot_data.push({
+            "y": data, 
+            "x": labels,
+            "name": sensor
+        });
   }
 
-  layout = {
-    "yaxis": {
-        "range": [
-            Math.min.apply(null, data) - 5, 
-            Math.max.apply(null, data) + 5
-        ],
-        "title": sensor_data[sensor][0]['unit']
-    }, 
-    "xaxis": {
-        "range": [
-            labels[0], 
-            labels[labels.length - 1]
-        ]
-    }
-  };
-
-  plot_data = [
-      {
-          "y": data, 
-          "x": labels
-      }
-  ];
+  
 
   Plotly.newPlot(document.getElementById('PlotSpot'), plot_data, layout);
 }
