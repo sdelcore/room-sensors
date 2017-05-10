@@ -26,7 +26,12 @@ echo "done."
 
 echo "Creating cron job..."
 echo "*/30 * * * *	$user $proj_dir/room_sensors.py > /dev/null &" > /etc/cron.d/room_sensors
-echo "@reboot $user $proj_dir/websocket_server.py > /dev/null &" > /etc/cron.d/websocket_server
+echo "done."
+
+echo "Setting up start up script"
+sed -i sed "s/export PATH\ .*/export\ PATH=$PATH:$proj_dir/" room-sensors
+cp room-sensors /etc/init.d/
+chkconfig --add room-sensors
 echo "done."
 
 echo "Setting up database..."

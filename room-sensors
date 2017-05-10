@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# /etc/init.d/room-sensors
+#
+# chkconfig: 2345 95 05	(1)
+# description: room server daemon
+#
+# processname: room-sensors
+# pidfile: /var/run/room-sensors.pid
+
+# source function library
+#. /etc/rc.d/init.d/functions
+
+RETVAL=0
+export PATH="$PATH"
+prog="websocket_server.py"
+
+start() {
+	echo -n $"Starting $prog:"
+	RETVAL=$?
+	[ "$RETVAL" = 0 ] && $prog > /dev/null &
+	echo
+}
+
+stop() {
+	echo -n $"Stopping $prog:"
+	killproc $prog -TERM
+	RETVAL=$?
+	[ "$RETVAL" = 0 ] && rm -f /var/lock/subsys/$prog
+	echo
+}
+
+reload() {
+	echo -n $"Reloading $prog:"
+	killproc $prog -HUP
+	RETVAL=$?
+	echo
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+	status)
+		status $prog
+		RETVAL=$?
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		RETVAL=1
+esac
+exit $RETVAL
