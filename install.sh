@@ -20,8 +20,15 @@ fi
 
 echo "Cloning git repo.."
 git clone https://github.com/sdelcore/room-sensors.git $proj_dir
-chmod +x $proj_dir/room_sensors.py
-chmod +x $proj_dir/websocket_server.py
+cd $proj_dir
+chmod +x room_sensors.py
+chmod +x websocket_server.py
+echo "done."
+
+echo "Setting up Arduino with PlatformIO"
+cd sensors
+platformio run -t upload
+cd ..
 echo "done."
 
 echo "Creating cron job..."
@@ -48,4 +55,4 @@ rm -rf /var/www/html/*
 cp -a web/. /var/www/html/
 echo "done."
 
-$proj_dir/websocket_server.py > /dev/null &
+/etc/init.d/room-sensors start
