@@ -1,14 +1,20 @@
 # room-sensors
 
-## Project Setup
-There are 4 sensors connected to an arduino, the readings from these sensors are then parsed and passed through the serial port to a Raspberry Pi. The Raspberry Pi takes readings from the arduino every 30 minutes, and stores it into a MySQL database.
-A websocket server is hosted on the raspberry pi, and a web page as well. The web page charts the data that gets passed through the websocket.
+## Project Explaination
+There are 4 sensors connected to an Arduino, the readings from these sensors are then parsed and passed through the serial port to a Raspberry Pi. The Raspberry Pi takes the readings from the arduino every 30 minutes, and stores it into a MySQL database.
+A websocket server and web page is hosted on the Raspberry Pi. The websocket server will pass the sensor data to the web page, and the web page will chart the data.
 
-## pip packages
+## Packages
  - pyserial
  - MySQL-python
  - platformio
  - SimpleWebSocketServer
 
- ## Start websocket server on startup
- Add `$proj_dir` to your list of start up scripts
+## Sensors
+ - DHT11 - for temperature and humidity
+ - TMP36 - for temperature
+ -  - for sound
+ -  - for light
+
+## Arduino Connections
+
