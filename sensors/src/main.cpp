@@ -6,16 +6,18 @@
     Humidity/Temperature Sensor: D3
     Sound Sensor: A2, D6
 
-    Read from the sensors and parse it through the serial port in the created protocol
+    Read from the sensors and parse it through the serial port using the following protocol
 
-    Protocol for sending sensor through serial port
-        Start sending a sensor reading: <
+    Protocol:
+        Start sending multiple sensors data: <
+	Start sending a sensor reading: <
         Sensor indicator: 3 chars indicating sensor (XXX)
         Unit indicator: 1 char indicating unit of data (C/F/%)
         Sensor value numbers: ##
         Finish sending a sensor reading: >
+	Finish sending multiple sensor data: >
 
-        Example: <DHT+021.21C>
+        Example: <<DHT##C><TMP##C>>
 */
 
 #include "Arduino.h"
@@ -43,7 +45,7 @@ void setup(void) {
   dht.begin();
   pinMode(SOUND_DIGITAL_PIN, INPUT);
   pinMode(START_READ_PIN, INPUT);
-  delay(wait_time);//Wait before accessing sensors
+  delay(5000);//Wait before accessing sensors
 }
 
 void serialFlush(){
