@@ -36,7 +36,7 @@ echo "*/30 * * * *	$user $proj_dir/room_sensors.py > /dev/null &" > /etc/cron.d/
 echo "done."
 
 echo "Setting up start up script"
-sed -i 's/.*export PATH.*/export\ PATH="$PATH:$proj_dir"/' room-sensors
+sed -i "s|.*export PATH.*|export PATH='$PATH:$proj_dir'|" room-sensors
 cp room-sensors /etc/init.d/
 update-rc.d room-sensors defaults
 echo "done."

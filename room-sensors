@@ -12,28 +12,18 @@
 ### END INIT INFO
 
 RETVAL=0
-export PATH="$PATH:$proj_dir"
+export PATH='/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/sdelcore/bin'
 prog="websocket_server.py"
 
 start() {
-	echo -n $"Starting $prog:"
-	RETVAL=$?
-	[ "$RETVAL" = 0 ] && $prog > /dev/null &
+	echo -n "Starting $prog:"
+	$prog > /dev/null &
 	echo
 }
 
 stop() {
 	echo -n $"Stopping $prog:"
-	killproc $prog -TERM
-	RETVAL=$?
-	[ "$RETVAL" = 0 ] && rm -f /var/lock/subsys/$prog
-	echo
-}
-
-reload() {
-	echo -n $"Reloading $prog:"
-	killproc $prog -HUP
-	RETVAL=$?
+	killall room-sensors
 	echo
 }
 
@@ -48,12 +38,6 @@ case "$1" in
 		stop
 		start
 		;;
-	status)
-		status $prog
-		RETVAL=$?
-		;;
 	*)
 		echo $"Usage: $0 {start|stop|restart|status}"
-		RETVAL=1
 esac
-exit $RETVAL
