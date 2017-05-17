@@ -11,7 +11,7 @@
 # Description:       This service is used to manage websocket server
 ### END INIT INFO
 
-export PATH=$PATH:/home/pi/room-sensors
+export PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/pi/room-sensors'
 prog="/home/pi/room-sensors/websocket_server.py"
 
 start() {
