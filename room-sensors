@@ -1,23 +1,22 @@
 #!/bin/sh
-# /etc/init.d/room-sensors
+#/etc/init.d/room-sensors
 
 ### BEGIN INIT INFO
 # Provides:          room-sensors
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
+# Required-Start:    $all mysql
+# Required-Stop:     
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: initscript
 # Description:       This service is used to manage websocket server
 ### END INIT INFO
 
-RETVAL=0
-export PATH='/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/sdelcore/bin'
-prog="websocket_server.py"
+export PATH=$PATH:/home/pi/room-sensors
+prog="/home/pi/room-sensors/websocket_server.py"
 
 start() {
 	echo -n "Starting $prog:"
-	$prog > /dev/null &
+	/usr/bin/python $prog > /dev/null & 
 	echo
 }
 
@@ -39,5 +38,5 @@ case "$1" in
 		start
 		;;
 	*)
-		echo $"Usage: $0 {start|stop|restart|status}"
+		echo $"Usage: $0 {start|stop|restart}"
 esac

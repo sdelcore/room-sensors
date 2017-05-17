@@ -1,7 +1,7 @@
 var data = {};
 var labels = {};
 
-var websocket = new WebSocket("ws://localhost:8000");
+var websocket = new WebSocket("ws://192.168.0.12:8000");
 
 websocket.onmessage = function (event) {
   sensor_data = JSON.parse(event.data);

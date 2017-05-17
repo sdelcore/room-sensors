@@ -24,14 +24,13 @@
 #include "DHT.h"
 
 #define LIGHT_PIN 0
-#define TEMP_PIN 1 // the cell and 10K pulldown are connected to a0
+#define TEMP_PIN 1
 #define DHT_PIN 3
 #define SOUND_DIGITAL_PIN 6
 #define SOUND_ANALOG_PIN 2
 #define START_READ_PIN 13
 
-int start_read = 0;
-int light_reading;     // the analog reading from the sensor divider
+int light_reading;
 float temp_reading_raw;
 int temp_reading;
 int sound_digital_reading;
@@ -66,11 +65,8 @@ void loop(void) {
     char light_str[10];
     sprintf(light_str, "<LIT-%d>", light_reading);
 
-    //gets and prints the raw data from the lm35
     temp_reading_raw = analogRead(TEMP_PIN);
-    //converts raw data into degrees celsius and prints it out
-    // 500mV/1024=.48828125
-    temp_reading = temp_reading_raw * 500/1024;
+    temp_reading = temp_reading_raw * 500/1024;//converts raw data into degrees celsius and prints it out
     char temp_str[10];
     sprintf(temp_str, "<TMPC%d>", temp_reading);
 
