@@ -6,6 +6,7 @@ database=sensors
 sensors=(dht11_temperature dht11_humidity sound light temperature)
 proj_dir=/home/$user/room-sensors
 arduino_serial=/dev/ttyACM0
+ip=192.168.0.12
 
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
@@ -50,7 +51,6 @@ echo "done."
 
 echo "Setting up database..."
 mysql --user="$mysql_user" --password="$password" --execute="CREATE DATABASE IF NOT EXISTS $database;"
-#mysql --user="$mysql_user" --password="$password" --database="$database" --execute="DROP DATABASE $database;"
 
 for i in "${sensors[@]}"
 do
@@ -59,6 +59,7 @@ done
 echo "done."
 
 echo "Setting up web page..."
+sed -i "s|.*var ip =.*|var ip = '$ip'|" room-sensors
 rm -rf /var/www/html/*
 cp -a web/. /var/www/html/
 echo "done."
