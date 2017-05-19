@@ -5,6 +5,7 @@ password=asd
 database=sensors
 sensors=(dht11_temperature dht11_humidity sound light temperature)
 proj_dir=/home/$user/room-sensors
+arduino_serial=/dev/ttyACM0
 
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
@@ -27,8 +28,13 @@ echo "done."
 
 echo "Setting up Arduino with PlatformIO"
 cd sensors
+wget https://raw.githubusercontent.com/platformio/platformio-core/develop/scripts/99-platformio-udev.rules
+cp 99-platformio-udev.rules /etc/udev/rules.d/99-platformio-udev.rules
+rm 99-platformio-udev.rules
+service udev restart
 platformio run -t upload
 cd ..
+sed -i "s|.*arduino_serial=.*|arduino_serial = $arduino_serial|" room_sensors.py
 echo "done."
 
 echo "Creating cron job..."
@@ -37,16 +43,18 @@ echo "done."
 
 echo "Setting up start up script"
 sed -i "s|.*export PATH.*|export PATH='$PATH:$proj_dir'|" room-sensors
-cp room-sensors /etc/init.d/
+chmod 755 room-sensors
+cp room-sensors /etc/init.d/room-sensors
 update-rc.d room-sensors defaults
 echo "done."
 
 echo "Setting up database..."
-mysql --user="$mysql_user" --password="$password" --database="$database" --execute="DROP DATABASE $database; CREATE DATABASE $database;"
+mysql --user="$mysql_user" --password="$password" --execute="CREATE DATABASE IF NOT EXISTS $database;"
+#mysql --user="$mysql_user" --password="$password" --database="$database" --execute="DROP DATABASE $database;"
 
 for i in "${sensors[@]}"
 do
-	mysql --user="$mysql_user" --password="$password" --execute="use $database; CREATE TABLE $i (id INT NOT NULL AUTO_INCREMENT,value INT,unit VARCHAR(100),date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY ( id ) )"
+	mysql --user="$mysql_user" --password="$password" --execute="use $database; DROP TABLE IF EXISTS $i; CREATE TABLE $i (id INT NOT NULL AUTO_INCREMENT,value INT,unit VARCHAR(100),date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY ( id ) )"
 done
 echo "done."
 

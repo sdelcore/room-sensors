@@ -4,6 +4,8 @@ import serial
 import datetime
 import time
 
+arduino_serial = '/dev/ttyACM0'
+
 class Room_Sensors:
 	sensors = {
 	 'DHT': 'dht11_temperature',
@@ -14,7 +16,7 @@ class Room_Sensors:
 	}
 
 	def __init__(self):
-		self.arduino = serial.Serial('/dev/ttyUSB0', 9600, timeout =.5)
+		self.arduino = serial.Serial(arduino_serial, 9600, timeout =.5)
 		self.database = Database()
 
 	def readSerial(self):
