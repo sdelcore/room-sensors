@@ -8,10 +8,12 @@ A websocket server and web page is hosted on the Raspberry Pi. The websocket ser
  - Python27:
    - pyserial
    - MySQL-python
-   - SimpleWebSocketServer
- - platformio
+   - SimpleWebSocketServer `sudo pip install git+https://github.com/dpallot/simple-websocket-server.git`
+   - platformio
  - MySQL
+ - python-devel
  - lighttpd
+ - git
 
 ## Sensors
  - DHT11 - Digital PWM Pin 3
@@ -30,4 +32,17 @@ Finish sending multiple sensor data: `>`
 
 Example: `<<DHT##C><TMP##C>>`
 
-The Raspberry Pi will know when a new set of readings start and end when it sees `<<` and `>>` respectivly
+The Raspberry Pi will know when a new full set of readings occur when sees `<<` and `>>`
+
+## Web page setup
+Change line `192.168.0.12`  in `/var/www/html/figure.js` to the ip address of the RPi
+
+## Install Script
+This script will:
+ 1. clone from the git repo
+ 1. make needed scripts executable
+ 1. modify needed scripts with provided information at the top of the install script
+ 1. push the arduino code to the connected arduino
+ 1. create needed database and tables 
+ 1. copy the web pages to `/var/www/html`
+ 
