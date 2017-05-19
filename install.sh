@@ -35,7 +35,7 @@ rm 99-platformio-udev.rules
 service udev restart
 platformio run -t upload
 cd ..
-sed -i "s|.*arduino_serial=.*|arduino_serial = $arduino_serial|" room_sensors.py
+sed -i "s|.*arduino_serial=.*|arduino_serial = '$arduino_serial'|" room_sensors.py
 echo "done."
 
 echo "Creating cron job..."
