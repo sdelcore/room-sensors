@@ -34,15 +34,18 @@ Example: `<<DHT##C><TMP##C>>`
 
 The Raspberry Pi will know when a new full set of readings occur when sees `<<` and `>>`
 
-## Web page setup
-Change line `192.168.0.12`  in `/var/www/html/figure.js` to the ip address of the RPi
-
 ## Install Script
+This is to be ran on the Raspberry Pi connected to an Arduino.
+
+Before installing, you have to modify the defined variables in the beginning of the script.
+
 This script will:
- 1. clone from the git repo
+ 1. clone entire project from the git repo
  1. make needed scripts executable
  1. modify needed scripts with provided information at the top of the install script
- 1. push the arduino code to the connected arduino
+ 1. push the arduino code
  1. create needed database and tables 
  1. copy the web pages to `/var/www/html`
+ 1. create an startup script for the wbesocket server
+ 1. create a cron job for reading from the arduino
  
