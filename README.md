@@ -48,4 +48,7 @@ This script will:
  1. copy the web pages to `/var/www/html`
  1. create an startup script for the wbesocket server
  1. create a cron job for reading from the arduino
- 
+
+## Chart Output 
+![alt text](images/light.png)
+![alt text](images/temp.png)
